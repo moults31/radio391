@@ -9,9 +9,7 @@
 #define HAL_H_
 
 // Define pin locations of ICs
-#define DEMUX1 P2OUT
-#define DEMUX1OFFSET 3
-#define DEMUX2 P1OUT
-#define DEMUX2OFFSET 0
+#define PIN_SR_TENS P1OUT
+#define PIN_SR_HUNDS P2OUT
 
 #endif /* HAL_H_ */
