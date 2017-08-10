@@ -9,7 +9,7 @@
 
 khz_t handleKeyPress(key_t key, khz_t f_curr)
 {
-    khz_t f_new = KHZ606;
+    khz_t f_new = 500;
     int swt = 1;
     volatile int keyVal;
 
@@ -24,16 +24,16 @@ khz_t handleKeyPress(key_t key, khz_t f_curr)
         case KEY_UP:
             if (f_curr < KHZMAX-1)
             {
-                f_new = f_curr + 1;
-                freq_set(f_new);
+                f_new = f_curr + RES;
+                freq_set_lin(&f_new);
             }
             else blinkRed();
             break;
         case KEY_DOWN:
             if (f_curr > (khz_t)0)
             {
-                f_new = f_curr - 1;
-                freq_set(f_new);
+                f_new = f_curr - RES;
+                freq_set_lin(&f_new);
             }
             else blinkRed();
             break;

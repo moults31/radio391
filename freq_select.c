@@ -14,6 +14,7 @@
 
 void freq_set_lut(khz_t f)
 {
+    uint32_t a = (uint32_t) f;
     static const uint16_t f2bin[52]=
     {
      0b0000111000, 0b0000100000, 0b0001100011, 0b0001100111, 0b0001111111,
@@ -29,19 +30,34 @@ void freq_set_lut(khz_t f)
      0b1000000000, 0b0000000000
     };
 
-    sr_set_tens(f2bin[f]);
-    sr_set_hunds(f2bin[f]);
+    sr_set_tens(f2bin[a]);
+    sr_set_units(f2bin[a]);
 }
 
-void freq_set_lin()
+void freq_set_lin(double *f)
 {
+    //recover the frequency and divide it by our synthesizer's resolution
+    double khz = (*f)/2.0;
 
+    uint16_t f_hundreds = (uint16_t) (khz/100)%10;
+    uint16_t f_tens = (uint16_t) (khz/10)%10;
+    uint16_t f_units = (uint16_t) (khz/1)%10;
+
+    static const uint16_t div2bin[10]=
+    {
+     0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b11111,
+     0b11110, 0b11100, 0b11000, 0b10000, 0b00000
+    };
+
+    freq_set_hunds(div2bin[f_hundreds]);
+    freq_set_tens(div2bin[f_tens]);
+    freq_set_units(div2bin[f_units]);
 }
 
 void sr_clear_all(void)
 {
     sr_set_tens(0);
-    sr_set_hunds(0);
+    sr_set_units(0);
 }
 
 void freq_set_units(uint16_t vals)
@@ -59,9 +75,8 @@ void freq_set_hunds(uint16_t vals)
     direct_set_hunds(vals);
 }
 
-void direct_set_hunds()
+void direct_set_hunds(uint16_t vals)
 {
-
 }
 
 /*
@@ -72,10 +87,9 @@ void sr_set_tens(uint16_t vals)
 {
     uint8_t i, val;
     uint8_t clk, data;
-    uint8_t en = 1;
 
-    //for sr_tens only use lower 5 bits
-    vals &= 0b11111;
+    //set enable high for tens(P2.3), low for units(P2.1)
+    uint8_t en = 0b10;
 
     for(i=0; i<SR_SIZE; i++)
     {
@@ -83,13 +97,13 @@ void sr_set_tens(uint16_t vals)
         data = 0b1 & vals;
 
         //build output "data,enable,clk"
-        val = clk<<2 | en<<1 | data;
+        val = clk<<2 | en | data;
 
-        PIN_SR_TENS = val;
+        PIN_SR = val;
 
         //send a rising edge on clk
         clk = 1;
-        PIN_SR_TENS |= clk<<2;
+        PIN_SR |= clk<<2;
 
         vals = vals>>1;
     }
@@ -102,27 +116,26 @@ void sr_set_tens(uint16_t vals)
  */
 void sr_set_units(uint16_t vals)
 {
-     uint8_t i, val;
-     uint8_t clk, data;
-     uint8_t en = 1;
+    uint8_t i, val;
+    uint8_t clk, data;
 
-     //for sr_hunds only use upper 5 bits
-     vals = (vals & 0b1111100000) >> SR_SIZE;
+    //set enable high for units(P2.3), low for units(P2.1)
+    uint8_t en = 0b10;
 
-     for(i=0; i<SR_SIZE; i++)
-     {
-         clk = 0;
-         data = 0b1 & vals;
+    for(i=0; i<SR_SIZE; i++)
+    {
+        clk = 0;
+        data = 0b1 & vals;
 
-         //build output "data,enable,clk"
-         val = clk<<2 | en<<1 | data;
+        //build output "data,enable,clk"
+        val = clk<<3 | en | data;
 
-         PIN_SR_UNITS = val;
+        PIN_SR = val;
 
-         //send a rising edge on clk
-         clk = 1;
-         PIN_SR_UNITS |= clk<<2;
+        //send a rising edge on clk
+        clk = 1;
+        PIN_SR |= clk<<3;
 
-         vals = vals>>1;
-     }
+        vals = vals>>1;
+    }
 }

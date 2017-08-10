@@ -14,10 +14,11 @@
 #include "freq_select.h"
 
 #define SR_SIZE 5
+#define RES 1
+#define KHZMAX 1000*RES
 
 // Define pin locations of ICs
-#define PIN_SR_TENS P1OUT
-#define PIN_SR_HUNDS P2OUT
+#define PIN_SR P2OUT
 
 typedef enum
 {
@@ -26,7 +27,7 @@ typedef enum
 } sr_t;
 
 //named indexes into LUT
-typedef enum{
+/*typedef enum{
     KHZ606=0, KHZ610, KHZ620, KHZ640, KHZ650,
     KHZ670, KHZ680, KHZ690, KHZ700, KHZ720,
     KHZ730, KHZ750, KHZ780, KHZ800, KHZ820,
@@ -38,13 +39,24 @@ typedef enum{
     KHZ1220, KHZ1230, KHZ1240, KHZ1250, KHZ1260,
     KHZ1270, KHZ1290, KHZ1300, KHZ1320, KHZ1330,
     KHZ1350, KHZ1400, KHZMAX
-} khz_t;
+} khz_t;*/
+
+typedef double khz_t;
 
 
 
+
+void freq_set_lut(khz_t f);
+void freq_set_lin(double *f);
+void freq_set_units(uint16_t vals);
+void freq_set_tens(uint16_t vals);
+void freq_set_hunds(uint16_t vals);
+void direct_set_hunds(uint16_t vals);
+void sr_clear_all(void);
+void sr_set_units(uint16_t vals);
 void sr_set_tens(uint16_t vals);
 void sr_set_hunds(uint16_t vals);
-void freq_set(khz_t f);
-void sr_clear_all(void);
+
+
 
 #endif /* FREQ_SELECT_H_ */
