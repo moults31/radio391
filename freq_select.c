@@ -4,18 +4,7 @@
  *  Created on: Aug 9, 2017
  *      Author: moults31
  */
-#include <msp430.h>
-#include <stdint.h>
-#include "hal.h"
 #include "freq_select.h"
-
-#define SR_SIZE 5
-
-typedef enum
-{
-    SR_TENS,
-    SR_HUNDS
-} sr_t;
 
 
 /**************************************************
@@ -42,6 +31,12 @@ void freq_set(khz_t f)
 
     sr_set_tens(f2bin[f]);
     sr_set_hunds(f2bin[f]);
+}
+
+void sr_clear_all(void)
+{
+    sr_set_tens(0);
+    sr_set_hunds(0);
 }
 
 /*

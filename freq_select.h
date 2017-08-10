@@ -8,6 +8,23 @@
 #ifndef FREQ_SELECT_H_
 #define FREQ_SELECT_H_
 
+#include <main.h>
+#include <msp430.h>
+#include <stdint.h>
+#include "freq_select.h"
+
+#define SR_SIZE 5
+
+// Define pin locations of ICs
+#define PIN_SR_TENS P1OUT
+#define PIN_SR_HUNDS P2OUT
+
+typedef enum
+{
+    SR_TENS,
+    SR_HUNDS
+} sr_t;
+
 //named indexes into LUT
 typedef enum{
     KHZ606, KHZ610, KHZ620, KHZ640, KHZ650,
@@ -28,5 +45,6 @@ typedef enum{
 void sr_set_tens(uint16_t vals);
 void sr_set_hunds(uint16_t vals);
 void freq_set(khz_t f);
+void sr_clear_all(void);
 
 #endif /* FREQ_SELECT_H_ */
