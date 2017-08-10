@@ -11,10 +11,14 @@
 #include "freq_select.h"
 
 #define SWT
-#define BUT_DOWN (P1IN && 0b10000)
-#define BUT_UP   (P1IN && 0b01000)
+#define PIN_KEY_DOWN (P1IN && 0b10000)
+#define PIN_KEY_UP   (P1IN && 0b01000)
 
-typedef uint8_t but_t;
+typedef enum
+{
+    KEY_DOWN,
+    KEY_UP
+} key_t;
 
 typedef enum
 {
@@ -22,6 +26,7 @@ typedef enum
     INCREMENT
 } swt_t;
 
-khz_t handleButtonPress(but_t button, khz_t f_curr);
+khz_t handleKeyPress(key_t key, khz_t f_curr);
+void blinkRed(void);
 
 #endif /* HCI_H_ */

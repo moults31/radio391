@@ -12,7 +12,7 @@
  * ************************************************
  */
 
-void freq_set(khz_t f)
+void freq_set_lut(khz_t f)
 {
     static const uint16_t f2bin[52]=
     {
@@ -33,10 +33,35 @@ void freq_set(khz_t f)
     sr_set_hunds(f2bin[f]);
 }
 
+void freq_set_lin()
+{
+
+}
+
 void sr_clear_all(void)
 {
     sr_set_tens(0);
     sr_set_hunds(0);
+}
+
+void freq_set_units(uint16_t vals)
+{
+    sr_set_units(vals);
+}
+
+void freq_set_tens(uint16_t vals)
+{
+    sr_set_tens(vals);
+}
+
+void freq_set_hunds(uint16_t vals)
+{
+    direct_set_hunds(vals);
+}
+
+void direct_set_hunds()
+{
+
 }
 
 /*
@@ -75,7 +100,7 @@ void sr_set_tens(uint16_t vals)
  * Brief: Set 8 values into the "hundreds" shift register IC
  * Param: vals: 8-entry array of 1-bit values to set in IC
  */
-void sr_set_hunds(uint16_t vals)
+void sr_set_units(uint16_t vals)
 {
      uint8_t i, val;
      uint8_t clk, data;
@@ -92,11 +117,11 @@ void sr_set_hunds(uint16_t vals)
          //build output "data,enable,clk"
          val = clk<<2 | en<<1 | data;
 
-         PIN_SR_HUNDS = val;
+         PIN_SR_UNITS = val;
 
          //send a rising edge on clk
          clk = 1;
-         PIN_SR_HUNDS |= clk<<2;
+         PIN_SR_UNITS |= clk<<2;
 
          vals = vals>>1;
      }

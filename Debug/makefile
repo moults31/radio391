@@ -10,6 +10,8 @@ GEN_OPTS__FLAG :=
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
+"./freq_select.obj" \
+"./hci.obj" \
 "./main.obj" \
 "../lnk_msp430g2553.cmd" \
 $(GEN_CMDS__FLAG) \
@@ -153,8 +155,8 @@ radio391.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" 
-	-$(RM) "main.d" 
+	-$(RM) "freq_select.obj" "hci.obj" "main.obj" 
+	-$(RM) "freq_select.d" "hci.d" "main.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

@@ -10,7 +10,9 @@
 void main(void)
 {
     uint32_t i = 0;
-    uint16_t a;
+    volatile uint16_t a,b,c;
+    volatile khz_t f = KHZ606;
+
 	WDTCTL = WDTPW | WDTHOLD;		// stop watchdog timer
 	P1DIR |= 0b111;					// configure P[1.0,1.2] as output
 	P2DIR |= 0b111;               // configure P[2.3,2.5] as output
@@ -21,8 +23,11 @@ void main(void)
 
 	while(1)
 	{
-	    a=P1IN & (0b11111111);
+	    a=P1IN;
+	    b = a&(0b10000);
+	    c = a&(0b01000);
 
-	    sr_set_tens(a);
+	    if(b == 0) f = handleKeyPress(KEY_UP, f);
+	    if(c == 0) f = handleKeyPress(KEY_DOWN, f);
 	}
 }
