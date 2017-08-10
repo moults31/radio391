@@ -10,13 +10,14 @@
 khz_t handleKeyPress(key_t key, khz_t f_curr)
 {
     khz_t f_new = 500;
-    int swt = 1;
+    uint8_t swt = (P2IN & 0b10000)>>4; //switch at P2.4
     volatile int keyVal;
 
     switch(swt)
     {
     case AUTOSEEK:
         //do autoseek and return f
+        f_new = 999;
         break;
     case INCREMENT:
         switch(key)

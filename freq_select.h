@@ -14,8 +14,8 @@
 #include "freq_select.h"
 
 #define SR_SIZE 5
-#define RES 1
-#define KHZMAX 1000*RES
+#define RES 2
+#define KHZMAX 999*RES
 
 // Define pin locations of ICs
 #define PIN_SR P2OUT

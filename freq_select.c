@@ -77,6 +77,7 @@ void freq_set_hunds(uint16_t vals)
 
 void direct_set_hunds(uint16_t vals)
 {
+
 }
 
 /*

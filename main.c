@@ -17,7 +17,8 @@ void main(void)
 	P1DIR |= 0b111;					// configure P[1.0,1.2] as output
 	P2DIR |= 0b1111;               // configure P[2.0,2.3] as output
 
-	P1DIR &= 0b00111;
+	P1DIR &= 0b00111; //configure P1.3,1.4 as input
+	P2DIR &= 0b10000; //configure P2.4 as input
 
 	sr_clear_all();
 

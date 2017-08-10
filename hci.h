@@ -22,8 +22,8 @@ typedef enum
 
 typedef enum
 {
-    AUTOSEEK,
-    INCREMENT
+    INCREMENT,
+    AUTOSEEK
 } swt_t;
 
 khz_t handleKeyPress(key_t key, khz_t f_curr);
