@@ -20,18 +20,15 @@ void main(void)
 	P1DIR |= 0b11000111;		    // configure P[1.0,1.2] and P[1.6,1.7] as outputs for hundreds divider
 	P2DIR |= 0b00001111;                // configure P[2.0,2.3] as outputs for shift regs
 
-	  unsigned char i;
-	  /* Configure ADC Temp Sensor Channel */
-	  ADC10CTL1 = INCH_5 + ADC10DIV_3;         // Temp Sensor ADC10CLK/4
-	  ADC10CTL0 = SREF_1 + ADC10SHT_3 + REFON + ADC10ON;
-	  __delay_cycles(1000);                     // Wait for ADC Ref to settle
-	  ADC10CTL0 |= ENC + ADC10SC;               // Sampling and conversion start
-
+	adc_config();
 
 	sr_clear_all();
 
 	while(1)
 	{
+	    ADC10CTL0 |= ENC + ADC10SC;             // Sampling and conversion start
+	    __bis_SR_register(CPUOFF + GIE);        // LPM0 with interrupts enabled
+
 	    a=P1IN;
 	    b = a&(0b10000);
 	    c = a&(0b01000);
@@ -39,4 +36,11 @@ void main(void)
 	    if(b == 0) f = handleKeyPress(KEY_UP, f);
 	    if(c == 0) f = handleKeyPress(KEY_DOWN, f);
 	}
+}
+
+// ADC10 interrupt service routine
+#pragma vector=ADC10_VECTOR
+__interrupt void ADC10_ISR (void)
+{
+  __bic_SR_register_on_exit(CPUOFF);        // Return to active mode
 }

@@ -57,6 +57,7 @@ void sr_set_units(uint16_t vals);
 void sr_set_tens(uint16_t vals);
 void sr_set_hunds(uint16_t vals);
 void adc_test(void);
+void adc_config(void);
 
 
 

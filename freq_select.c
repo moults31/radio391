@@ -146,7 +146,20 @@ void sr_set_units(uint16_t vals)
 
 void adc_test(void)
 {
-    volatile uint16_t a = ADC10MEM;
+    while(1)
+    {
+    volatile long a = ADC10MEM;
 
-    uint16_t b = a/10;
+    long b = a/10;
+    }
+}
+
+void adc_config(void)
+{
+    /* Configure ADC Temp Sensor Channel */
+    ADC10CTL1 = INCH_5 + ADC10DIV_3;         // Temp Sensor ADC10CLK/4
+    ADC10CTL0 = SREF_1 + ADC10SHT_3 + REFON + ADC10ON + ADC10IE;
+    __delay_cycles(1000);                     // Wait for ADC Ref to settle
+    ADC10CTL0 |= ENC + ADC10SC;               // Sampling and conversion start
+    __bis_SR_register(CPUOFF + GIE);          // LPM0 with interrupts enabled
 }
