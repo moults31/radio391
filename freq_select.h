@@ -14,7 +14,7 @@
 #include "freq_select.h"
 
 #define SR_SIZE 5
-#define RES 2
+#define RES 1
 #define KHZMAX 999*RES
 
 // Define pin locations of ICs
@@ -56,6 +56,7 @@ void sr_clear_all(void);
 void sr_set_units(uint16_t vals);
 void sr_set_tens(uint16_t vals);
 void sr_set_hunds(uint16_t vals);
+void adc_test(void);
 
 
 

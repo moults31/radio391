@@ -37,7 +37,7 @@ void freq_set_lut(khz_t f)
 void freq_set_lin(double *f)
 {
     //recover the frequency and divide it by our synthesizer's resolution
-    double khz = (*f)/2.0;
+    double khz = (*f)/1.0;
 
     uint16_t f_hundreds = (uint16_t) (khz/100)%10;
     uint16_t f_tens = (uint16_t) (khz/10)%10;
@@ -49,7 +49,7 @@ void freq_set_lin(double *f)
      0b11110, 0b11100, 0b11000, 0b10000, 0b00000
     };
 
-    freq_set_hunds(div2bin[f_hundreds]);
+    direct_set_hunds(div2bin[f_hundreds]);
     freq_set_tens(div2bin[f_tens]);
     freq_set_units(div2bin[f_units]);
 }
@@ -77,7 +77,10 @@ void freq_set_hunds(uint16_t vals)
 
 void direct_set_hunds(uint16_t vals)
 {
+    vals = (vals&0b11000)<<3 | (vals&0b111);
 
+    //set upper 2 bits
+    P1OUT = vals;
 }
 
 /*
@@ -139,4 +142,11 @@ void sr_set_units(uint16_t vals)
 
         vals = vals>>1;
     }
+}
+
+void adc_test(void)
+{
+    volatile uint16_t a = ADC10MEM;
+
+    uint16_t b = a/10;
 }
