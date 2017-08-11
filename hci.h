@@ -26,7 +26,7 @@ typedef enum
     AUTOSEEK
 } swt_t;
 
-khz_t handleKeyPress(key_t key, khz_t f_curr);
+double handleKeyPress(key_t key, double f_curr);
 void blinkRed(void);
 
 #endif /* HCI_H_ */

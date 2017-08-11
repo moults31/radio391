@@ -12,10 +12,14 @@
 #include <msp430.h>
 #include <stdint.h>
 #include "freq_select.h"
+#include "hci.h"
 
 #define SR_SIZE 5
 #define RES 1
 #define KHZMAX 999*RES
+#define KHZMIN 530 //minimum in AM range
+#define AUTOSEEK_ADC 0
+#define AUTOSEEK_SAVED (!AUTOSEEK_ADC)
 
 // Define pin locations of ICs
 #define PIN_SR P2OUT
@@ -58,6 +62,7 @@ void sr_set_tens(uint16_t vals);
 void sr_set_hunds(uint16_t vals);
 void adc_test(void);
 void adc_config(void);
+double autoseek(khz_t f_curr, uint8_t key);
 
 
 

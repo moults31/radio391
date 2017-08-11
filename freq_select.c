@@ -8,7 +8,7 @@
 
 
 /**************************************************
- ***  SHIFT REGISTER FUNCTION DEFINITIONS *********
+ ***  FREQUENCY SETTING FUNCTION DEFINITIONS *********
  * ************************************************
  */
 
@@ -45,19 +45,13 @@ void freq_set_lin(double *f)
 
     static const uint16_t div2bin[10]=
     {
-     0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b11111,
+     0b00000, 0b00001, 0b00011, 0b00111, 0b01111, 0b11111,
      0b11110, 0b11100, 0b11000, 0b10000, 0b00000
     };
 
-    direct_set_hunds(div2bin[f_hundreds]);
-    freq_set_tens(div2bin[f_tens]);
+    direct_set_hunds(div2bin[f_hundreds+1]);
+    freq_set_tens(div2bin[f_tens+1]);
     freq_set_units(div2bin[f_units]);
-}
-
-void sr_clear_all(void)
-{
-    sr_set_tens(0);
-    sr_set_units(0);
 }
 
 void freq_set_units(uint16_t vals)
@@ -82,6 +76,18 @@ void direct_set_hunds(uint16_t vals)
     //set upper 2 bits
     P1OUT = vals;
 }
+
+/**************************************************
+ ***  SHIFT REGISTER FUNCTION DEFINITIONS *********
+ * ************************************************
+ */
+
+void sr_clear_all(void)
+{
+    sr_set_tens(0);
+    sr_set_units(0);
+}
+
 
 /*
  * Brief: Set 8 values into the "tens" shift register IC
@@ -144,6 +150,11 @@ void sr_set_units(uint16_t vals)
     }
 }
 
+/**************************************************
+ ***  ADC FUNCTION DEFINITIONS *********
+ * ************************************************
+ */
+
 void adc_test(void)
 {
     while(1)
@@ -163,3 +174,58 @@ void adc_config(void)
     ADC10CTL0 |= ENC + ADC10SC;               // Sampling and conversion start
     __bis_SR_register(CPUOFF + GIE);          // LPM0 with interrupts enabled
 }
+
+
+/**************************************************
+ ***  AUTOSEEK FUNCTION DEFINITIONS *********
+ * ************************************************
+ */
+
+#if AUTOSEEK_ADC
+void autoseek(void)
+{
+
+}
+
+#elif AUTOSEEK_SAVED
+
+#define NUMAMCHANS 13
+double autoseek(khz_t f_curr, uint8_t key)
+{
+    static const uint16_t amchans[NUMAMCHANS]=
+    {
+     547,  650,  690,  727,  979,  1030, 1130,
+     1198, 1319, 1410, 1460, 1540, 1590
+    };
+
+    uint8_t i;
+
+    //loop until amchans[i] is between two frequencies and return the greater.
+    if(key == KEY_UP)
+    {
+        for(i=0;i<NUMAMCHANS-2;i++)
+        {
+            if(f_curr >= amchans[i] && f_curr < amchans[i+1] && amchans[i+1] < KHZMAX)
+            {
+                freq_set_lin(amchans[i+1]);
+                return amchans[i+1];
+            }
+        }
+    }
+    //loop until amchans[i] is between two frequencies and return the less.
+    else
+    {
+        for(i=NUMAMCHANS-1;i>0;i--)
+        {
+            if(f_curr <= amchans[i] && f_curr > amchans[i-1] && amchans[i-1] < KHZMAX)
+            {
+                freq_set_lin(amchans[i-1]);
+                return amchans[i-1];
+            }
+        }
+    }
+
+    //cannot scan anymore in this direction. return unchanged f
+    return f_curr;
+}
+#endif //AUTOSEEK_ADC

@@ -23,8 +23,9 @@ khz_t handleKeyPress(key_t key, khz_t f_curr)
     {
     case AUTOSEEK:
         //do autoseek and return f
-        f_new = 999;
-        adc_test();
+        //f_new = 999;
+        //adc_test();
+        f_new = autoseek(f_curr, key);
         break;
     case INCREMENT:
         switch(key)
@@ -38,7 +39,7 @@ khz_t handleKeyPress(key_t key, khz_t f_curr)
             else blinkRed();
             break;
         case KEY_DOWN:
-            if (f_curr > (khz_t)0)
+            if (f_curr > KHZMIN+1)
             {
                 f_new = f_curr - 1*RES;
                 freq_set_lin(&f_new);

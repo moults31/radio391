@@ -11,6 +11,7 @@ hci.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-msp430_16.9.3.LTS/include/intrinsics.
 hci.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-msp430_16.9.3.LTS/include/intrinsics_legacy_undefs.h
 hci.obj: C:/ti/ccsv7/tools/compiler/ti-cgt-msp430_16.9.3.LTS/include/stdint.h
 hci.obj: ../freq_select.h
+hci.obj: ../hci.h
 
 ../hci.c: 
 ../hci.h: 
@@ -23,3 +24,4 @@ C:/ti/ccsv7/tools/compiler/ti-cgt-msp430_16.9.3.LTS/include/intrinsics.h:
 C:/ti/ccsv7/tools/compiler/ti-cgt-msp430_16.9.3.LTS/include/intrinsics_legacy_undefs.h: 
 C:/ti/ccsv7/tools/compiler/ti-cgt-msp430_16.9.3.LTS/include/stdint.h: 
 ../freq_select.h: 
+../hci.h: 

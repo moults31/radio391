@@ -4,13 +4,11 @@
 #include "freq_select.h"
 #include "hci.h"
 
-/**
- * blink.c
- */
+
 void main(void)
 {
     volatile uint16_t a,b,c;
-    volatile khz_t f = 688;
+    double f = 688;
 
 	WDTCTL = WDTPW | WDTHOLD;		// stop watchdog timer
 
@@ -23,6 +21,8 @@ void main(void)
 	adc_config();
 
 	sr_clear_all();
+
+	freq_set_lin(&f);
 
 	while(1)
 	{
