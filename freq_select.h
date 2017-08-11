@@ -30,6 +30,13 @@ typedef enum
     SR_HUNDS
 } sr_t;
 
+typedef enum
+{
+    STATE_BEGINNING,
+    STATE_RISING,
+    STATE_FALLING
+} state_t;
+
 //named indexes into LUT
 /*typedef enum{
     KHZ606=0, KHZ610, KHZ620, KHZ640, KHZ650,
@@ -63,6 +70,7 @@ void sr_set_hunds(uint16_t vals);
 void adc_test(void);
 void adc_config(void);
 double autoseek(khz_t f_curr, uint8_t key);
+long getv(void);
 
 
 

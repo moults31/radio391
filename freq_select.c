@@ -180,17 +180,76 @@ void adc_config(void)
  ***  AUTOSEEK FUNCTION DEFINITIONS *********
  * ************************************************
  */
-
-#if AUTOSEEK_ADC
-void autoseek(void)
+double autoseek(khz_t f_curr, uint8_t key)
+#if !AUTOSEEK_ADC
+#define VTHRESH_PEAK 200
+#define VTHRESH_NOISE 20
 {
+    long v, vold, vpeak, vknee;
+    state_t state = STATE_BEGINNING;
+    double f_peak;
 
+    vold = v = ADC10MEM;
+
+    //Check that we have risen to a peak
+    while((key==0) ? (f_curr-1>KHZMIN) : (f_curr+1<KHZMAX))
+    {
+        vold = v;
+        v = getv();
+
+        switch(state)
+        {
+        case STATE_BEGINNING:
+            if(v-vold > VTHRESH_NOISE)
+            {
+                state = STATE_RISING;
+                vknee = v;
+            }
+
+        case STATE_RISING:
+            if(vold-v > VTHRESH_NOISE)
+            {
+                state = STATE_FALLING;
+                vpeak = v;
+                f_peak = f_curr;
+            }
+
+        case STATE_FALLING:
+        default:
+             if(v-vold > VTHRESH_NOISE)
+             {
+                 state = STATE_RISING;
+                 vpeak = v;
+                 f_peak = f_curr;
+             }
+             else if(vpeak-v > VTHRESH_PEAK && vpeak-vknee > VTHRESH_PEAK)
+             {
+                 //We found a legitimate peak, tune to it and return.
+                 freq_set_lin(&f_peak);
+                 return f_peak;
+             }
+             break;
+        }
+
+        if(key==0)
+        {
+            f_curr--;
+            freq_set_lin(&f_curr);
+        }
+        else
+        {
+            f_curr++;
+            freq_set_lin(&f_curr);
+        }
+    }
+
+    //We hit the end of the tunable range with no peaks.
+    //Return frequency at end of range in shame.
+    return f_curr;
 }
 
 #elif AUTOSEEK_SAVED
-
 #define NUMAMCHANS 13
-double autoseek(khz_t f_curr, uint8_t key)
 {
     static const uint16_t amchans[NUMAMCHANS]=
     {
@@ -229,3 +288,16 @@ double autoseek(khz_t f_curr, uint8_t key)
     return f_curr;
 }
 #endif //AUTOSEEK_ADC
+
+long getv(void)
+{
+    uint16_t i;
+    long v = ADC10MEM;
+
+    for(i=0;i<128;i++)
+    {
+        v = (ADC10MEM>v) ? ADC10MEM : v;
+    }
+
+    return v;
+}
